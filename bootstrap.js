@@ -20,7 +20,8 @@ const PREF_WHITELIST = [
   "browser.onboarding.notification.lastPrompted",
   "browser.onboarding.tourset-version",
   "browser.onboarding.tour-type",
-  "browser.onboarding.seen-tourset-version"
+  "browser.onboarding.seen-tourset-version",
+  "browser.onboarding.firstLaunch"
 ];
 
 [
@@ -36,7 +37,8 @@ const PREF_WHITELIST = [
 const PREF_BRANCH = "browser.onboarding.";
 const PREFS = {
   "enabled": true,
-  "tourset-version": 1
+  "tourset-version": 1,
+  "firstLaunch": true
 };
 
 function setDefaultPrefs() {

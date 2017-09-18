@@ -6,19 +6,22 @@
 
 "use strict";
 
-const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
+const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/Preferences.jsm");
+var userInfo = Components.classes["@mozilla.org/userinfo;1"]
+  .getService(Components.interfaces.nsIUserInfo);
 
 const ONBOARDING_CSS_URL = "resource://onboarding/onboarding.css";
 const ABOUT_HOME_URL = "about:home";
 const ABOUT_NEWTAB_URL = "about:newtab";
+const USERNAME = userInfo.fullname.split(" ")[0];
 const BUNDLE_URI = "chrome://onboarding/locale/onboarding.properties";
 const UITOUR_JS_URI = "resource://onboarding/lib/UITour-lib.js";
 const TOUR_AGENT_JS_URI = "resource://onboarding/onboarding-tour-agent.js";
 const BRAND_SHORT_NAME = Services.strings
-                     .createBundle("chrome://branding/locale/brand.properties")
-                     .GetStringFromName("brandShortName");
+  .createBundle("chrome://branding/locale/brand.properties")
+  .GetStringFromName("brandShortName");
 
 /**
  * Add any number of tours, following the format
@@ -253,6 +256,7 @@ class Onboarding {
 
     this._initPrefObserver();
     this._initNotification();
+    this.showFirst();
   }
 
   _initNotification() {
@@ -340,7 +344,7 @@ class Onboarding {
       this.gotoPage(evt.target.id);
     } else if (classList.contains("onboarding-tour-action-button")) {
       let activeItem = this._tourItems.find(item => item.classList.contains("onboarding-active"));
-      this.setToursCompleted([ activeItem.id ]);
+      this.setToursCompleted([activeItem.id]);
     }
   }
 
@@ -409,6 +413,16 @@ class Onboarding {
     }
   }
 
+  showFirst() {
+    if (Preferences.get("browser.onboarding.firstLaunch", true)) {
+      this.toggleOverlay();
+      this.sendMessageToChrome("set-prefs", [{
+        name: "browser.onboarding.firstLaunch",
+        value: false
+      }]);
+    }
+  }
+
   showNotification() {
     if (Preferences.get("browser.onboarding.notification.finished", false)) {
       return;
@@ -436,7 +450,7 @@ class Onboarding {
     // This would form [#4, #5, #0, #1, #2, #3].
     // So the 1st met incomplete tour in #4 ~ #2 would be the one to show.
     // Or #3 would be the one to show if #4 ~ #2 are all completed.
-    let toursToNotify = [ ...onboardingTours.slice(lastTourIndex + 1), ...onboardingTours.slice(0, lastTourIndex + 1) ];
+    let toursToNotify = [...onboardingTours.slice(lastTourIndex + 1), ...onboardingTours.slice(0, lastTourIndex + 1)];
     targetTour = toursToNotify.find(tour => !this.isTourCompleted(tour.id));
 
 
@@ -540,9 +554,9 @@ class Onboarding {
     `;
 
     div.querySelector("label[for='onboarding-tour-hidden-checkbox']").textContent =
-       this._bundle.GetStringFromName("onboarding.hidden-checkbox-label-text");
+      this._bundle.GetStringFromName("onboarding.hidden-checkbox-label-text");
     div.querySelector("#onboarding-header").textContent =
-       this._bundle.formatStringFromName("onboarding.overlay-title", [BRAND_SHORT_NAME], 1);
+      this._bundle.formatStringFromName("onboarding.overlay-title", [USERNAME], 1);
     return div;
   }
 
@@ -573,7 +587,7 @@ class Onboarding {
         // only and frequently used arguments in our l10n case. Rewrite it if
         // other arguments appears.
         element.textContent = this._bundle.formatStringFromName(
-                                element.dataset.l10nId, [BRAND_SHORT_NAME], 1);
+          element.dataset.l10nId, [BRAND_SHORT_NAME], 1);
       }
 
       div.id = `${tour.id}-page`;
@@ -619,7 +633,7 @@ class Onboarding {
 
 // Load onboarding module only when we enable it.
 if (Services.prefs.getBoolPref("browser.onboarding.enabled", false) &&
-    !Services.prefs.getBoolPref("browser.onboarding.hidden", false)) {
+  !Services.prefs.getBoolPref("browser.onboarding.hidden", false)) {
 
   addEventListener("load", function onLoad(evt) {
     if (!content || evt.target != content.document) {

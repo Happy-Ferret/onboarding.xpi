@@ -41,7 +41,7 @@
 #onboarding-notification-close-btn {
   position: absolute;
   top: 15px;
-  offset-inline-end: 15px;
+  offset-inline-start: 15px;
   cursor: pointer;
   width: 16px;
   height: 16px;
@@ -49,6 +49,8 @@
   background-position: center center;
   background-repeat: no-repeat;
   padding: 12px;
+  -moz-context-properties: fill;
+  fill: rgba(255, 255, 255, 0.7);
 }
 
 #onboarding-overlay-close-btn:hover,
@@ -59,7 +61,7 @@
 #onboarding-overlay.onboarding-opened > #onboarding-overlay-dialog {
   width: 960px;
   height: 510px;
-  background: #f5f5f7;
+  background: rgba(0,0,0,0.8);
   border: 1px solid rgba(9, 6, 13, 0.1); /* #09060D, 0.1 opacity */
   border-radius: 3px;
   position: relative;
@@ -79,12 +81,13 @@
 #onboarding-overlay-dialog > header {
   grid-row: dialog-start / page-start;
   grid-column: dialog-start / tour-end;
-  margin-top: 22px;
+  margin-top: 42px;
   margin-bottom: 0;
   margin-inline-end: 0;
   margin-inline-start: 36px;
   font-size: 22px;
   font-weight: 200;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 #onboarding-overlay-dialog > nav {
@@ -127,7 +130,10 @@
   background-position: left 10px top 7px;
   background-size: 34px;
   font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
+  -moz-context-properties: fill;
+  fill: rgba(157, 205, 255, 1)
 }
 
 #onboarding-tour-list > li:dir(rtl) {
@@ -148,7 +154,7 @@
 #onboarding-tour-list > li.onboarding-active,
 #onboarding-tour-list > li:hover {
   border-inline-start-color: #5ce6e6;
-  background-color: #fff;
+  background-color: rgba(74,144,226,0.3)
 }
 
 /* Sync tour */
@@ -209,6 +215,7 @@
   line-height: 22px;
   padding-inline-start: 40px;
   padding-inline-end: 28px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .onboarding-tour-description > h1 {
